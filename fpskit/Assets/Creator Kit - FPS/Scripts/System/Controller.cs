@@ -101,6 +101,7 @@ public class Controller : MonoBehaviour
     // Stores the player's speed when they leave the ground (for air movement)
     float m_SpeedAtJump = 0.0f;
 
+    bool m_HasDoubleJumped = false; 
     // ============= WEAPON AND INVENTORY SYSTEMS =============
     // List of all weapons the player currently owns
     List<Weapon> m_Weapons = new List<Weapon>();
@@ -213,6 +214,7 @@ public class Controller : MonoBehaviour
             // CharacterController says we're grounded, so reset timer and mark as grounded
             m_GroundedTimer = 0.0f;
             m_Grounded = true;
+            m_HasDoubleJumped = false;
         }
 
         // Reset speed and movement vector for this frame
@@ -235,6 +237,15 @@ public class Controller : MonoBehaviour
                 loosedGrounding = true;
                 // Play jump sound with slight pitch variation (0.8f to 1.1f)
                 FootstepPlayer.PlayClip(JumpingAudioCLip, 0.8f, 1.1f);
+            }
+            else if (!m_Grounded && !m_HasDoubleJumped && Input.GetButtonDown("Jump"))
+            {
+                // Apply upward velocity for double jump
+                m_VerticalSpeed = JumpSpeed;
+                // Play jump sound again
+                FootstepPlayer.PlayClip(JumpingAudioCLip, 0.8f, 1.1f);
+                // Mark that we've used our double jump
+                m_HasDoubleJumped = true;
             }
 
             // ============= RUNNING/WALKING SPEED =============
